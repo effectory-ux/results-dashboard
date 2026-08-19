@@ -371,6 +371,9 @@
       mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
+      /* a single pixel of blur so the line reads as lit rather than drawn, and blends into
+         the glow around it; at 2px a 1px ring loses its definition */
+      filter: blur(1px);
       opacity: 0;
       transition: opacity var(--motion-slow) var(--ease-out);
       pointer-events: none;
