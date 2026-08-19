@@ -344,6 +344,43 @@
       box-shadow: var(--sh-card);
       padding: var(--spacing-loose);
     }
+
+    /* A gradient sweeps around the border for a few seconds after a summary is rendered,
+       then settles back into the resting border. The ring is a conic gradient rotated by
+       an @property angle (a plain custom property cannot be animated) and masked down to
+       the 1px edge. The "off" part of the sweep is the resting border colour, so the ring
+       dissolves into it instead of blinking out. */
+    @property --ai-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+    .ai-summary::before {
+      content: '';
+      position: absolute; inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: conic-gradient(from var(--ai-angle),
+        var(--border-info-subtle) 0deg,
+        var(--bg-accent-purple-base) 60deg,
+        var(--bg-info) 120deg,
+        var(--bg-brand) 180deg,
+        var(--border-info-subtle) 260deg);
+      /* keep only the 1px ring: the fill masks itself out (#000 is mask alpha, not a colour) */
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity var(--motion-slow) var(--ease-out);
+      pointer-events: none;
+    }
+    .ai-summary.is-generating::before {
+      opacity: 1;
+      animation: ai-border-sweep 2.5s linear infinite;
+    }
+    @keyframes ai-border-sweep { to { --ai-angle: 360deg; } }
+    @media (prefers-reduced-motion: reduce) {
+      /* no rotation, but the ring still shows and fades, so the moment stays visible */
+      .ai-summary.is-generating::before { animation: none; }
+    }
+
     .ai-head { display: flex; align-items: center; gap: var(--spacing-base-tight); margin-bottom: var(--spacing-base); }
     .ai-head-left { display: flex; align-items: center; gap: var(--spacing-tight); flex: 1; }
     .ai-spark { display: flex; width: 22px; height: 22px; color: var(--content-info-secondary); }
@@ -2036,6 +2073,12 @@ function renderOverview(variant) {
   const aiToggle = document.getElementById('ai-toggle');
   const aiBody = document.getElementById('ai-body');
   const aiReduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Freshly rendered summary: sweep the border for a few seconds, then let it settle.
+     Re-runs on a language switch and on the reload behind a group/period switch, which
+     is exactly when the summary is written again. */
+  aiSummary.classList.add('is-generating');
+  setTimeout(() => aiSummary.classList.remove('is-generating'), 5000);
 
   let aiRelease = 0;
   const releaseHeight = () => { if (aiSummary.classList.contains('is-open')) aiBody.style.maxHeight = 'none'; };
