@@ -379,10 +379,32 @@
                   0 0 0 -6px color-mix(in srgb, var(--bg-info) 10%, transparent),
                   0 0px 22px color-mix(in srgb, var(--bg-info) 20%, transparent);
     }
+    /* The glow travels with the ring: the shadow above is the even base, and this is a
+       brighter patch that turns around the card on the same angle, so the bright spot of
+       the ring and of the glow are always in the same place. Behind the card (z-index -1),
+       so only what falls outside the edge shows, and blurred wider than that spill. */
+    .ai-summary::after {
+      content: '';
+      position: absolute;
+      inset: calc(-1 * var(--spacing-base-tight));
+      z-index: -1;
+      border-radius: inherit;
+      background: conic-gradient(from var(--ai-angle),
+        transparent 0deg,
+        var(--bg-info) 70deg,
+        var(--bg-brand) 130deg,
+        transparent 210deg);
+      filter: blur(14px);
+      opacity: 0;
+      transition: opacity var(--motion-slow) var(--ease-out);
+      pointer-events: none;
+    }
+    .ai-summary.is-generating::after { opacity: .45; animation: ai-border-sweep 2.5s linear infinite; }
     @keyframes ai-border-sweep { to { --ai-angle: 360deg; } }
     @media (prefers-reduced-motion: reduce) {
       /* no rotation, but the ring and glow still appear and fade, so the moment stays visible */
-      .ai-summary.is-generating::before { animation: none; }
+      .ai-summary.is-generating::before,
+      .ai-summary.is-generating::after { animation: none; }
     }
 
     .ai-head { display: flex; align-items: center; gap: var(--spacing-base-tight); margin-bottom: var(--spacing-base); }
