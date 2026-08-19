@@ -345,40 +345,54 @@
       padding: var(--spacing-loose);
     }
 
-    /* A gradient sweeps around the border for a few seconds after a summary is rendered,
-       then settles back into the resting border. The ring is a conic gradient rotated by
-       an @property angle (a plain custom property cannot be animated) and masked down to
-       the 1px edge. The "off" part of the sweep is the resting border colour, so the ring
-       dissolves into it instead of blinking out. */
+    /* For a few seconds after a summary is rendered the card glows: a coloured halo turns
+       around it and a brighter gradient runs over its edge, then both fade back into the
+       resting border. Two layers of the same rotating conic gradient — one blurred halo
+       outside the card (::after, behind the card's own background), one crisp ring on the
+       edge (::before) — driven by an @property angle, because a plain custom property
+       cannot be animated. */
     @property --ai-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
-    .ai-summary::before {
+    .ai-summary::before,
+    .ai-summary::after {
       content: '';
-      position: absolute; inset: -1px;
+      position: absolute;
       border-radius: inherit;
-      padding: 1px;
+      opacity: 0;
+      transition: opacity var(--motion-slow) var(--ease-out);
+      pointer-events: none;
+    }
+    /* halo: sits behind the card, so only what spills past the edge is visible. The blur is
+       wider than the spill, which is what keeps the edge soft instead of a coloured band. */
+    .ai-summary::after {
+      inset: calc(-1 * var(--spacing-base));
+      z-index: -1;
+      background: conic-gradient(from var(--ai-angle),
+        var(--bg-info), var(--bg-accent-purple-base), var(--bg-brand), var(--bg-info));
+      filter: blur(20px);
+    }
+    /* ring: the card's own edge, 2px so the colour actually reads */
+    .ai-summary::before {
+      inset: -2px;
+      padding: 2px;
       background: conic-gradient(from var(--ai-angle),
         var(--border-info-subtle) 0deg,
         var(--bg-accent-purple-base) 60deg,
         var(--bg-info) 120deg,
         var(--bg-brand) 180deg,
-        var(--border-info-subtle) 260deg);
-      /* keep only the 1px ring: the fill masks itself out (#000 is mask alpha, not a colour) */
+        var(--border-info-subtle) 280deg);
+      /* keep only the ring: the fill masks itself out (#000 is mask alpha, not a colour) */
       -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
-      opacity: 0;
-      transition: opacity var(--motion-slow) var(--ease-out);
-      pointer-events: none;
     }
-    .ai-summary.is-generating::before {
-      opacity: 1;
-      animation: ai-border-sweep 2.5s linear infinite;
-    }
+    .ai-summary.is-generating::before { opacity: 1; animation: ai-border-sweep 2.5s linear infinite; }
+    .ai-summary.is-generating::after  { opacity: .6; animation: ai-border-sweep 2.5s linear infinite; }
     @keyframes ai-border-sweep { to { --ai-angle: 360deg; } }
     @media (prefers-reduced-motion: reduce) {
-      /* no rotation, but the ring still shows and fades, so the moment stays visible */
-      .ai-summary.is-generating::before { animation: none; }
+      /* no rotation, but the glow still appears and fades, so the moment stays visible */
+      .ai-summary.is-generating::before,
+      .ai-summary.is-generating::after { animation: none; }
     }
 
     .ai-head { display: flex; align-items: center; gap: var(--spacing-base-tight); margin-bottom: var(--spacing-base); }
