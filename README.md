@@ -14,7 +14,7 @@ De samenvattingskaart wijkt op vier punten af van het huidige dashboard:
 - de ingeklapte tekst fadet onderaan uit in plaats van hard af te kappen, en loopt door achter de Show more-button, zodat je ziet dat er meer is
 - Show more / less is een tertiary button uit het design system
 - "Learn more" opent de dialog **How this summary is created**, met de uitleg over AI bij Effectory
-- de kaart gloeit een paar seconden zodra de samenvatting gerenderd is: een ronddraaiende gekleurde halo eromheen plus een gradient over de rand, die daarna terugzakken in de rustrand
+- de kaart licht een paar seconden op zodra de samenvatting gerenderd is: een gradient draait om de rand en de kaart staat in een zachte gloed, allebei in de info/brand-kleuren, en zakt daarna terug in de rustrand
 
 Draaien aan de ingeklapte staat kan met drie variabelen op `.ai-summary`: `--ai-peek`
 (hoeveel tekst), `--ai-fade` (lengte van de fade) en `--ai-lift` (hoe ver de tekst onder
