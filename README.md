@@ -30,3 +30,13 @@ repo bevat alleen de pagina's zelf. Een wijziging in het design system is hier m
 zichtbaar. Keerzijde: verhuist die site, dan moeten deze links mee.
 
 Toegevoegd aan de galerij op https://effectory-ux.github.io/prototypes/
+
+## Prototype toolbar
+
+De pagina draagt de gedeelde [prototype toolbar](https://github.com/effectory-ux/prototype-toolbar)
+(`toolbar/`, een kopie van de gepubliceerde release; `toolbar/update.sh` ververst hem), nu vooral voor de live link om te delen; versies, schermen en
+edge cases komen erbij zodra dit prototype groeit (`proto-config.js`). Lokaal staat hij altijd
+aan. Live alleen via de collega-link
+https://effectory-ux.github.io/results-dashboard/ai-summary-improvement.html?rd-5x8n-toolbar-active —
+zonder `?rd-5x8n-toolbar-active` is het de schone versie voor testers. De toolbar zelf verandert
+alleen via `toolbar/` (zie `CLAUDE.md`).
