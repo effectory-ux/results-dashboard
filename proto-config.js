@@ -5,7 +5,6 @@
 // Add `versions`, `screens`, `edgeCases` or `variants` here as the prototype
 // grows — each menu appears as soon as it has entries.
 window.PROTO_TOOLBAR = {
-  key: "rd-5x8n",              // the ?<key>-toolbar-active gate of the live site
   prefix: "rd",                // localStorage namespace
   name: "Results dashboard",
   live: "https://effectory-ux.github.io/results-dashboard/"
